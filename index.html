@@ -1,0 +1,353 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ReceiptVault helps you organize, search, and manage your receipts and expenses in one modern dashboard.">
+  <meta name="theme-color" content="#0b1020">
+  <title>ReceiptVault — Smart Receipt Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="app-layout">
+
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#" aria-label="ReceiptVault home">
+        <span class="brand-mark">R</span>
+        <span>Receipt<span class="brand-accent">Vault</span></span>
+      </a>
+
+      <div class="sidebar-label">WORKSPACE</div>
+      <nav class="side-nav" aria-label="Main navigation">
+        <button class="side-link active" data-view="dashboard">
+          <span class="nav-icon">▦</span> Dashboard
+        </button>
+        <button class="side-link" data-view="receipts">
+          <span class="nav-icon">▤</span> All receipts
+        </button>
+        <button class="side-link" data-view="favorites">
+          <span class="nav-icon">♡</span> Favorites
+        </button>
+      </nav>
+
+      <div class="sidebar-label category-label">CATEGORIES</div>
+      <nav class="side-nav category-nav" id="categoryNav" aria-label="Receipt categories">
+        <button class="side-link" data-category="Shopping">
+          <span class="category-dot purple"></span> Shopping
+        </button>
+        <button class="side-link" data-category="Food">
+          <span class="category-dot orange"></span> Food & Dining
+        </button>
+        <button class="side-link" data-category="Transport">
+          <span class="category-dot blue"></span> Transport
+        </button>
+        <button class="side-link" data-category="Bills">
+          <span class="category-dot green"></span> Bills
+        </button>
+        <button class="side-link" data-category="Health">
+          <span class="category-dot pink"></span> Health
+        </button>
+        <button class="side-link" data-category="Other">
+          <span class="category-dot gray"></span> Other
+        </button>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="storage-card">
+          <div class="storage-icon">✦</div>
+          <strong>Your receipts, organized.</strong>
+          <p>Keep your spending records together in one place.</p>
+          <button id="sidebarAddButton">+ Add a receipt</button>
+        </div>
+        <div class="profile">
+          <div class="avatar">RV</div>
+          <div>
+            <strong>Personal Workspace</strong>
+            <span>Local account</span>
+          </div>
+          <span class="profile-menu">•••</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu" id="mobileMenu" aria-label="Toggle navigation">☰</button>
+          <div>
+            <p class="breadcrumb">Workspace <span>/</span> <strong id="breadcrumbTitle">Dashboard</strong></p>
+            <p class="topbar-date" id="todayLabel"></p>
+          </div>
+        </div>
+
+        <div class="topbar-actions">
+          <button class="icon-button" id="exportButton" title="Export receipts" aria-label="Export receipts">↓</button>
+          <button class="primary-button" id="addReceiptButton"><span>＋</span> Add receipt</button>
+        </div>
+      </header>
+
+      <section class="page-section" id="dashboardView">
+        <div class="welcome-row">
+          <div>
+            <p class="eyebrow">YOUR FINANCIAL ORGANIZER</p>
+            <h1>Good day. <span>Stay organized.</span></h1>
+            <p class="welcome-description">Every receipt in its place. Every expense within reach.</p>
+          </div>
+          <div class="date-chip"><span>◷</span> <span id="currentDate"></span></div>
+        </div>
+
+        <section class="stats-grid" aria-label="Receipt statistics">
+          <article class="stat-card">
+            <div class="stat-top">
+              <span class="stat-label">Total expenses</span>
+              <span class="stat-icon violet">↗</span>
+            </div>
+            <strong class="stat-value" id="totalExpenses">KES 0.00</strong>
+            <span class="stat-note">Across all saved receipts</span>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-top">
+              <span class="stat-label">Total receipts</span>
+              <span class="stat-icon blue">▤</span>
+            </div>
+            <strong class="stat-value" id="totalReceipts">0</strong>
+            <span class="stat-note">Records in your vault</span>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-top">
+              <span class="stat-label">Average receipt</span>
+              <span class="stat-icon orange">◉</span>
+            </div>
+            <strong class="stat-value" id="averageExpense">KES 0.00</strong>
+            <span class="stat-note">Average spending per receipt</span>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-top">
+              <span class="stat-label">This month</span>
+              <span class="stat-icon green">▥</span>
+            </div>
+            <strong class="stat-value" id="monthlyExpenses">KES 0.00</strong>
+            <span class="stat-note">Receipts dated this month</span>
+          </article>
+        </section>
+
+        <section class="dashboard-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">YOUR RECORDS</p>
+              <h2>Recent receipts</h2>
+              <p class="panel-subtitle">Your latest saved purchases and transactions.</p>
+            </div>
+            <button class="text-button" id="viewAllButton">View all receipts →</button>
+          </div>
+          <div class="receipt-list" id="recentReceipts"></div>
+          <div class="empty-state" id="dashboardEmpty" hidden>
+            <div class="empty-icon">▤</div>
+            <h3>Your receipt vault is empty</h3>
+            <p>Add your first receipt to start organizing your expenses.</p>
+            <button class="primary-button" id="emptyAddButton">＋ Add your first receipt</button>
+          </div>
+        </section>
+
+        <section class="dashboard-bottom">
+          <article class="dashboard-panel category-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">SPENDING BREAKDOWN</p>
+                <h2>By category</h2>
+              </div>
+            </div>
+            <div id="categoryBreakdown" class="category-breakdown"></div>
+          </article>
+
+          <article class="dashboard-panel tip-panel">
+            <div class="tip-icon">✦</div>
+            <p class="eyebrow">A LITTLE ORGANIZATION GOES A LONG WAY</p>
+            <h2>Never lose track of a receipt again.</h2>
+            <p>Save your transaction details and receipt images together. Find them whenever you need them.</p>
+            <button class="outline-button" id="tipAddButton">Save a receipt →</button>
+          </article>
+        </section>
+      </section>
+
+      <section class="page-section" id="receiptsView" hidden>
+        <div class="page-title-row">
+          <div>
+            <p class="eyebrow">YOUR COLLECTION</p>
+            <h1 id="listTitle">All receipts</h1>
+            <p class="welcome-description">Search, filter and find any saved transaction.</p>
+          </div>
+          <button class="primary-button" id="listAddButton">＋ Add receipt</button>
+        </div>
+
+        <div class="toolbar">
+          <div class="search-box">
+            <span>⌕</span>
+            <input type="search" id="receiptSearch" placeholder="Search merchant, receipt ID, notes..." aria-label="Search receipts">
+            <kbd>⌘ K</kbd>
+          </div>
+          <select id="categoryFilter" aria-label="Filter by category">
+            <option value="">All categories</option>
+            <option>Shopping</option>
+            <option>Food</option>
+            <option>Transport</option>
+            <option>Bills</option>
+            <option>Health</option>
+            <option>Other</option>
+          </select>
+          <select id="sortFilter" aria-label="Sort receipts">
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="highest">Highest amount</option>
+            <option value="lowest">Lowest amount</option>
+          </select>
+        </div>
+
+        <div class="filter-summary">
+          <span id="receiptResultCount">0 receipts</span>
+          <button class="text-button" id="clearFilters">Clear filters</button>
+        </div>
+
+        <div class="receipt-grid" id="receiptGrid"></div>
+
+        <div class="empty-state" id="listEmpty" hidden>
+          <div class="empty-icon">⌕</div>
+          <h3>No matching receipts</h3>
+          <p>Try changing your search or filters, or add a new receipt.</p>
+          <button class="outline-button" id="clearEmptyFilters">Clear filters</button>
+        </div>
+      </section>
+
+      <footer class="app-footer">
+        <span>© <span id="footerYear"></span> ReceiptVault</span>
+        <span>Designed to keep your records in order.</span>
+        <span class="local-indicator"><i></i> Saved locally</span>
+      </footer>
+    </main>
+  </div>
+
+  <!-- ADD / EDIT RECEIPT MODAL -->
+  <div class="modal-backdrop" id="receiptModal" hidden>
+    <section class="form-modal" role="dialog" aria-modal="true" aria-labelledby="formTitle">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">RECEIPT DETAILS</p>
+          <h2 id="formTitle">Add a new receipt</h2>
+          <p>Enter your transaction information below.</p>
+        </div>
+        <button class="modal-close" id="closeFormModal" aria-label="Close form">×</button>
+      </div>
+
+      <form id="receiptForm">
+        <div class="form-grid">
+          <label class="form-field full-width">
+            <span>Merchant / Business name *</span>
+            <input type="text" id="merchant" placeholder="e.g. Carrefour, Naivas, Java House" maxlength="80" required>
+          </label>
+
+          <label class="form-field">
+            <span>Amount (KES) *</span>
+            <div class="amount-input">
+              <span>KES</span>
+              <input type="number" id="amount" placeholder="0.00" min="0.01" max="999999999" step="0.01" required>
+            </div>
+          </label>
+
+          <label class="form-field">
+            <span>Purchase date *</span>
+            <input type="date" id="purchaseDate" required>
+          </label>
+
+          <label class="form-field">
+            <span>Category *</span>
+            <select id="receiptCategory" required>
+              <option value="">Select category</option>
+              <option>Shopping</option>
+              <option>Food</option>
+              <option>Transport</option>
+              <option>Bills</option>
+              <option>Health</option>
+              <option>Other</option>
+            </select>
+          </label>
+
+          <label class="form-field">
+            <span>Payment method</span>
+            <select id="paymentMethod">
+              <option value="M-Pesa">M-Pesa</option>
+              <option value="Cash">Cash</option>
+              <option value="Card">Card</option>
+              <option value="Bank transfer">Bank transfer</option>
+              <option value="Other">Other</option>
+            </select>
+          </label>
+
+          <label class="form-field full-width">
+            <span>Receipt number / Transaction ID</span>
+            <input type="text" id="receiptNumber" placeholder="e.g. QWE123456" maxlength="80">
+          </label>
+
+          <label class="form-field full-width">
+            <span>Notes</span>
+            <textarea id="receiptNotes" rows="3" maxlength="500" placeholder="Add details about this purchase..."></textarea>
+          </label>
+
+          <div class="form-field full-width">
+            <span>Receipt image</span>
+            <label class="upload-zone" for="receiptImage">
+              <input type="file" id="receiptImage" accept="image/jpeg,image/png,image/webp" hidden>
+              <span class="upload-icon">↑</span>
+              <strong>Click to upload a receipt image</strong>
+              <small>JPG, PNG or WebP · Maximum 8 MB</small>
+              <img id="imagePreview" alt="Receipt image preview" hidden>
+              <span id="removeImage" class="remove-image" hidden>Remove image</span>
+            </label>
+          </div>
+
+          <label class="favorite-option full-width">
+            <input type="checkbox" id="receiptFavorite">
+            <span>♡</span> Add to favorites
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="outline-button" id="cancelForm">Cancel</button>
+          <button type="submit" class="primary-button" id="saveReceiptButton">Save receipt</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <!-- RECEIPT DETAILS MODAL -->
+  <div class="modal-backdrop" id="detailModal" hidden>
+    <section class="detail-modal" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+      <button class="modal-close detail-close" id="closeDetailModal" aria-label="Close receipt details">×</button>
+      <div class="detail-top">
+        <p class="eyebrow">RECEIPT INFORMATION</p>
+        <h2 id="detailTitle">Merchant name</h2>
+        <strong class="detail-amount" id="detailAmount"></strong>
+        <span class="detail-date" id="detailDate"></span>
+      </div>
+      <div class="detail-image-wrap" id="detailImageWrap" hidden>
+        <img id="detailImage" alt="Uploaded receipt">
+      </div>
+      <div class="detail-fields" id="detailFields"></div>
+      <div class="detail-actions">
+        <button class="outline-button" id="detailFavorite">♡ Favorite</button>
+        <button class="outline-button" id="detailEdit">Edit receipt</button>
+        <button class="danger-button" id="detailDelete">Delete</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
